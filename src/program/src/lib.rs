@@ -10,9 +10,7 @@ use borsh::{BorshDeserialize, BorshSerialize};
 
 #[derive(BorshSerialize, BorshDeserialize)]
 pub enum Action {
-    StartAuction,
-    MakeBid(u64),
-    FinalizeAuction,
+    BatteryReport(u64),
 }
 
 entrypoint!(process_instruction);
@@ -26,23 +24,11 @@ fn process_instruction(
         .map_err(|_| ProgramError::InvalidInstructionData)?;
 
     match action {
-        Action::StartAuction => start_auction(accounts),
-        Action::MakeBid(amount) => place_bid(accounts, amount),
-        Action::FinalizeAuction => finalize_auction(accounts),
+        Action::BatteryReport(amount) => battery_report(accounts, amount),
     }
 }
 
-fn start_auction(_accounts: &[AccountInfo]) -> ProgramResult {
-    msg!("Instruction: Start Auction");
-    Ok(())
-}
-
-fn place_bid(_accounts: &[AccountInfo], _amount: u64) -> ProgramResult {  
-    msg!("Instruction: Place Bid");
-    Ok(())
-}
-
-fn finalize_auction(_accounts: &[AccountInfo]) -> ProgramResult {
-    msg!("Instruction: Finalize Auction");
+fn battery_report(_accounts: &[AccountInfo], amount: u64) -> ProgramResult {  
+    msg!("Instruction: Place Bid: {}", amount);
     Ok(())
 }
