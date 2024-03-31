@@ -3,8 +3,6 @@ import {Schema, serialize} from 'borsh';
 export enum ActionKind {
     BatteryReport,
     PlaceBid,
-    StartAuction,
-    FinalizeAuction,
 }
 
 export class Action {
@@ -27,7 +25,7 @@ export class Action {
         }
     }
 
-    static makeBidSchema: Schema = {
+    static placeBidSchema: Schema = {
         struct: {
             kind: 'u8',
             amount: 'u64'
@@ -51,20 +49,11 @@ export class Action {
                     throw new Error("Missing required fields for BatteryReport");
                 }
                 break;
-
-            case ActionKind.StartAuction:
-                this.kind = ActionKind.StartAuction;
-                this.amount = null;
-                break;
             case ActionKind.PlaceBid:
                 this.kind = ActionKind.PlaceBid;
                 if (this.amount === undefined) {
-                    throw new Error('Amount is required for MakeBid action');
+                    throw new Error('Amount is required for PlaceBid action');
                 }
-                break;
-            case ActionKind.FinalizeAuction:
-                this.kind = ActionKind.FinalizeAuction;
-                this.amount = null;
                 break;
 
             default:
@@ -84,13 +73,10 @@ export class Action {
                     battery_level: this.battery_level
                 }));
             case ActionKind.PlaceBid:
-                return Buffer.from(serialize(Action.makeBidSchema, {
+                return Buffer.from(serialize(Action.placeBidSchema, {
                     kind: this.kind,
                     amount: this.amount
                 }));
-            case ActionKind.StartAuction:
-            case ActionKind.FinalizeAuction:
-                return Buffer.from(serialize({ struct: { kind: 'u8' } }, { kind: this.kind }));
             default:
                 throw new Error(`Unknown action: ${this.kind}`);
         }

@@ -118,6 +118,6 @@ pub struct BatteryReport {
 pub enum Action {
     BatteryReport(BatteryReport),
     PlaceBid(u64),
-    StartAuction,
-    FinalizeAuction,
+    // StartAuction,
+    // FinalizeAuction,
 }

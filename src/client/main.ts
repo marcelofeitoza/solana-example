@@ -59,12 +59,10 @@ async function main() {
     //         max_capacity: 100.0,
     //         battery_level: 99.0
     //     }),
-    //     new Action(ActionKind.StartAuction),
     //     new Action(ActionKind.PlaceBid, {amount: 100}),
-    //     new Action(ActionKind.FinalizeAuction)
     // ];
     // for (let action of actions) {
-    //     console.log("\nCalling action: ", ActionKind[action.kind]);
+    //     console.log("\n\n---Calling action: ", ActionKind[action.kind]);
     //
     //     let instructionData = action.serialize();
     //     let instruction = new TransactionInstruction({
@@ -79,16 +77,16 @@ async function main() {
     //         [triggerKeypair]
     //     );
     //
-    //     console.log("Success");
+    //     console.log("Success---");
     // }
 
-    setInterval(async () => {
+     setInterval(async () => {
         let action = new Action(ActionKind.BatteryReport, {
             id: "id",
-            latitude: Math.random() * 180 - 90, // Random latitude between -90 and 90
-            longitude: Math.random() * 360 - 180, // Random longitude between -180 and 180
+            latitude: Math.random() * 180.0 - 90.0,
+            longitude: Math.random() * 360.0 - 180.0,
             max_capacity: 100.0,
-            battery_level: Math.random() * 100 // Random battery level between 0 and 100
+            battery_level: Math.random() * 100.0
         });
 
         console.log("\nCalling action: ", ActionKind[action.kind]);
