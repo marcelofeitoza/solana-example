@@ -7,75 +7,95 @@ import {
     Transaction,
     sendAndConfirmTransaction
 } from "@solana/web3.js";
-import { Schema, serialize } from 'borsh';
-import fs from "mz/fs";
-import path from "path";
-import { Buffer } from 'buffer';
-import os from 'os';
+import * as fs from "mz/fs";
+import * as path from "path";
+import * as os from 'os';
+
+import {Action, ActionKind} from './Action';
 
 const PROGRAM_KEYPAIR_PATH = path.join(path.resolve(__dirname, '../../dist/program'), "program-keypair.json");
 const TRIGGER_KEYPAIR_PATH = path.resolve(os.homedir(), '.config/solana/id.json');
 
-enum ActionKind {
-    BatteryReport = 0
-}
-
-class Action {
-    kind: ActionKind;
-    amount: number | null;
-
-    static schema = {
-        struct: {
-            kind: 'u8',
-            amount: 'u64'
-        }
-    }
-
-    constructor(action: string, amount?: number) {
-        switch (action) {
-            case 'BatteryReport':
-                this.kind = ActionKind.BatteryReport;
-                if (amount === undefined) {
-                    throw new Error('Amount is required for BatteryReport action');
-                }
-                this.amount = amount;
-                break;
-            default:
-                throw new Error(`Unknown action: ${action}`);
-        }
-    }
-
-    serialize(): Buffer {
-        return Buffer.from(serialize(Action.schema, this));
-    }
-}
-
-async function main() {
+const setup = async (): Promise<{
+    connection: Connection;
+    programId: PublicKey;
+    triggerKeypair: Keypair;
+}> => {
     console.log("Opening client keypair...");
 
-    let connection = new Connection("https://api.devnet.solana.com", 'confirmed');
+    let connection: Connection = new Connection("https://api.devnet.solana.com", 'confirmed');
 
-    const secretKeyString = await fs.readFile(PROGRAM_KEYPAIR_PATH, { encoding: "utf-8" });
+    const secretKeyString = await fs.readFile(PROGRAM_KEYPAIR_PATH, {encoding: "utf-8"});
     const secretKey = Uint8Array.from(JSON.parse(secretKeyString));
     const programKeypair = Keypair.fromSecretKey(secretKey);
+
     let programId: PublicKey = programKeypair.publicKey;
 
-    const triggerSecretKeyString = await fs.readFile(TRIGGER_KEYPAIR_PATH, { encoding: "utf-8" });
+    const triggerSecretKeyString = await fs.readFile(TRIGGER_KEYPAIR_PATH, {encoding: "utf-8"});
     const triggerSecretKey = Uint8Array.from(JSON.parse(triggerSecretKeyString));
-    const triggerKeypair = Keypair.fromSecretKey(triggerSecretKey);
+
+    const triggerKeypair: Keypair = Keypair.fromSecretKey(triggerSecretKey);
 
     console.log("Balance of trigger account:", await connection.getBalance(triggerKeypair.publicKey));
     console.log("Calling program: ", programId.toBase58());
 
-    // Transactions
-    let actions = [
-        new Action('BatteryReport', 100)
-    ];
+    return {connection, programId, triggerKeypair};
+}
 
-    for (let action of actions) {
+async function main() {
+    const {
+        connection,
+        programId,
+        triggerKeypair
+    } = await setup();
+
+    console.log("Trigger account:", triggerKeypair.publicKey.toBase58());
+
+    // let actions = [
+    //     new Action(ActionKind.BatteryReport, {
+    //         id: "id",
+    //         latitude: 1.0,
+    //         longitude: 2.01,
+    //         max_capacity: 100.0,
+    //         battery_level: 99.0
+    //     }),
+    //     new Action(ActionKind.StartAuction),
+    //     new Action(ActionKind.PlaceBid, {amount: 100}),
+    //     new Action(ActionKind.FinalizeAuction)
+    // ];
+    // for (let action of actions) {
+    //     console.log("\nCalling action: ", ActionKind[action.kind]);
+    //
+    //     let instructionData = action.serialize();
+    //     let instruction = new TransactionInstruction({
+    //         keys: [{pubkey: triggerKeypair.publicKey, isSigner: true, isWritable: false}],
+    //         programId,
+    //         data: instructionData
+    //     });
+    //
+    //     await sendAndConfirmTransaction(
+    //         connection,
+    //         new Transaction().add(instruction),
+    //         [triggerKeypair]
+    //     );
+    //
+    //     console.log("Success");
+    // }
+
+    setInterval(async () => {
+        let action = new Action(ActionKind.BatteryReport, {
+            id: "id",
+            latitude: Math.random() * 180 - 90, // Random latitude between -90 and 90
+            longitude: Math.random() * 360 - 180, // Random longitude between -180 and 180
+            max_capacity: 100.0,
+            battery_level: Math.random() * 100 // Random battery level between 0 and 100
+        });
+
+        console.log("\nCalling action: ", ActionKind[action.kind]);
+
         let instructionData = action.serialize();
         let instruction = new TransactionInstruction({
-            keys: [{ pubkey: triggerKeypair.publicKey, isSigner: true, isWritable: false }],
+            keys: [{pubkey: triggerKeypair.publicKey, isSigner: true, isWritable: false}],
             programId,
             data: instructionData
         });
@@ -85,7 +105,9 @@ async function main() {
             new Transaction().add(instruction),
             [triggerKeypair]
         );
-    }
+
+        console.log("Success");
+    }, 1000);
 }
 
 main().catch(err => {
