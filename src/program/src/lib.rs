@@ -1,32 +1,43 @@
 mod program_state;
 mod models;
 
-use solana_program::{account_info::AccountInfo, entrypoint, entrypoint::ProgramResult, pubkey::Pubkey, program_error::ProgramError, msg};
+use solana_program::{
+    account_info::AccountInfo,
+    entrypoint,
+    pubkey::Pubkey,
+    entrypoint::ProgramResult,
+    program_error::ProgramError,
+    msg
+};
 use borsh::BorshDeserialize;
+use solana_program::account_info::next_account_info;
 use program_state::ProgramState;
-use models::{Action};
+
+use models::Action;
 
 entrypoint!(process_instruction);
 
-fn process_instruction<'a>(
+fn process_instruction(
     _program_id: &Pubkey,
-    accounts: &'a [AccountInfo<'a>],
+    accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
+    let accounts_iter = &mut accounts.iter();
+    let account = next_account_info(accounts_iter)?;
+    // if account.owner != program_id {
+    //     msg!("Greeted account does not have the correct program id");
+    //     return Err(ProgramError::IncorrectProgramId);
+    // }
+
     let mut program_state = ProgramState::new();
 
     let action = Action::try_from_slice(instruction_data)
         .map_err(|_| ProgramError::InvalidInstructionData)?;
 
-    match action {
-        Action::BatteryReport(report) => program_state.battery_report(report, accounts),
-        Action::PlaceBid(amount) => program_state.place_bid(amount, accounts),
-        Action::StartAuction => program_state.get_stations(accounts),
-        Action::FinalizeAuction => finalize_auction(accounts),
-    }
-}
+    msg!("\nINFO: Action: {:?}", action);
 
-fn finalize_auction(_accounts: &[AccountInfo]) -> ProgramResult {
-    msg!("Instruction: Finalize Auction");
-    Ok(())
+    match action {
+        Action::BatteryReport(report) => program_state.battery_report(report, account),
+        Action::PlaceBid(params) => program_state.place_bid(params, account),
+    }
 }

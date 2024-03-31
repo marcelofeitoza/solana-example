@@ -51,19 +51,55 @@ async function main() {
 
     console.log("Trigger account:", triggerKeypair.publicKey.toBase58());
 
-    // let actions = [
-    //     new Action(ActionKind.BatteryReport, {
+    for (let action of [
+        new Action(ActionKind.BatteryReport, {
+            id: "1",
+            latitude: 1.0,
+            longitude: 2.01,
+            max_capacity: 100.0,
+            battery_level: 19.0
+        }),
+        new Action(ActionKind.PlaceBid, {
+            id: "1",
+            bidder: triggerKeypair.publicKey.toBase58(),
+            amount: 10.0,
+            price_per_amount: 1.0
+        }),
+        new Action(ActionKind.BatteryReport, {
+            id: "1",
+            latitude: 1.0,
+            longitude: 2.01,
+            max_capacity: 100.0,
+            battery_level: 15.0
+        }),
+    ]) {
+        console.log("\n\n---Calling action: ", ActionKind[action.kind]);
+
+        let instructionData = action.serialize();
+        let instruction = new TransactionInstruction({
+            keys: [{pubkey: triggerKeypair.publicKey, isSigner: true, isWritable: true}],
+            programId,
+            data: instructionData
+        });
+
+        await sendAndConfirmTransaction(
+            connection,
+            new Transaction().add(instruction),
+            [triggerKeypair]
+        );
+
+        console.log("Success---");
+    }
+
+    //  setInterval(async () => {
+    //     let action = new Action(ActionKind.BatteryReport, {
     //         id: "id",
-    //         latitude: 1.0,
-    //         longitude: 2.01,
+    //         latitude: Math.random() * 180.0 - 90.0,
+    //         longitude: Math.random() * 360.0 - 180.0,
     //         max_capacity: 100.0,
-    //         battery_level: 99.0
-    //     }),
-    //     new Action(ActionKind.StartAuction),
-    //     new Action(ActionKind.PlaceBid, {amount: 100}),
-    //     new Action(ActionKind.FinalizeAuction)
-    // ];
-    // for (let action of actions) {
+    //         battery_level: Math.random() * 100.0
+    //     });
+    //
     //     console.log("\nCalling action: ", ActionKind[action.kind]);
     //
     //     let instructionData = action.serialize();
@@ -80,34 +116,7 @@ async function main() {
     //     );
     //
     //     console.log("Success");
-    // }
-
-    setInterval(async () => {
-        let action = new Action(ActionKind.BatteryReport, {
-            id: "id",
-            latitude: Math.random() * 180 - 90, // Random latitude between -90 and 90
-            longitude: Math.random() * 360 - 180, // Random longitude between -180 and 180
-            max_capacity: 100.0,
-            battery_level: Math.random() * 100 // Random battery level between 0 and 100
-        });
-
-        console.log("\nCalling action: ", ActionKind[action.kind]);
-
-        let instructionData = action.serialize();
-        let instruction = new TransactionInstruction({
-            keys: [{pubkey: triggerKeypair.publicKey, isSigner: true, isWritable: false}],
-            programId,
-            data: instructionData
-        });
-
-        await sendAndConfirmTransaction(
-            connection,
-            new Transaction().add(instruction),
-            [triggerKeypair]
-        );
-
-        console.log("Success");
-    }, 1000);
+    // }, 1000);
 }
 
 main().catch(err => {

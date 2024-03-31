@@ -3,8 +3,6 @@ import {Schema, serialize} from 'borsh';
 export enum ActionKind {
     BatteryReport,
     PlaceBid,
-    StartAuction,
-    FinalizeAuction,
 }
 
 export class Action {
@@ -15,6 +13,8 @@ export class Action {
     max_capacity: number | null |undefined;
     battery_level: number | null |undefined;
     amount: number | null | undefined;
+    bidder: string | null | undefined;
+    price_per_amount: number | null | undefined;
 
     static batteryReportSchema: Schema = {
         struct: {
@@ -27,10 +27,13 @@ export class Action {
         }
     }
 
-    static makeBidSchema: Schema = {
+    static placeBidSchema: Schema = {
         struct: {
             kind: 'u8',
-            amount: 'u64'
+            id: 'string',
+            bidder: 'string',
+            amount: 'f32',
+            price_per_amount: 'f32',
         }
     }
 
@@ -42,6 +45,8 @@ export class Action {
         this.max_capacity = options.max_capacity;
         this.battery_level = options.battery_level;
         this.amount = options.amount;
+        this.bidder = options.bidder;
+        this.price_per_amount = options.price_per_amount;
 
         switch (this.kind) {
             case ActionKind.BatteryReport:
@@ -52,19 +57,11 @@ export class Action {
                 }
                 break;
 
-            case ActionKind.StartAuction:
-                this.kind = ActionKind.StartAuction;
-                this.amount = null;
-                break;
             case ActionKind.PlaceBid:
                 this.kind = ActionKind.PlaceBid;
-                if (this.amount === undefined) {
-                    throw new Error('Amount is required for MakeBid action');
+                if (this.id === undefined || this.amount === undefined) { // (this.id || this.amount) === undefined
+                    throw new Error('Amount is required for PlaceBid action');
                 }
-                break;
-            case ActionKind.FinalizeAuction:
-                this.kind = ActionKind.FinalizeAuction;
-                this.amount = null;
                 break;
 
             default:
@@ -84,13 +81,13 @@ export class Action {
                     battery_level: this.battery_level
                 }));
             case ActionKind.PlaceBid:
-                return Buffer.from(serialize(Action.makeBidSchema, {
+                return Buffer.from(serialize(Action.placeBidSchema, {
                     kind: this.kind,
-                    amount: this.amount
+                    id: this.id,
+                    bidder: this.bidder,
+                    amount: this.amount,
+                    price_per_amount: this.price_per_amount
                 }));
-            case ActionKind.StartAuction:
-            case ActionKind.FinalizeAuction:
-                return Buffer.from(serialize({ struct: { kind: 'u8' } }, { kind: this.kind }));
             default:
                 throw new Error(`Unknown action: ${this.kind}`);
         }
@@ -104,4 +101,6 @@ export interface ActionOptions {
     max_capacity?: number;
     battery_level?: number;
     amount?: number;
+    bidder?: string;
+    price_per_amount?: number;
 }

@@ -5,9 +5,10 @@ use borsh::{BorshDeserialize, BorshSerialize};
 pub struct Bid {
     pub bidder: String,
     pub amount: f32,
+    pub price_per_amount: f32,
 }
 
-#[derive(BorshSerialize, BorshDeserialize, Debug)]
+#[derive(BorshSerialize, BorshDeserialize, Debug, Clone )]
 pub struct Auction {
     pub req_charge: f32,
     pub timestamp: u64,
@@ -16,7 +17,7 @@ pub struct Auction {
     pub winning_bids: Vec<Bid>,
 }
 
-#[derive(BorshSerialize, BorshDeserialize, Debug)]
+#[derive(BorshSerialize, BorshDeserialize, Debug, Clone)]
 pub struct Station {
     pub id: String,
     pub latitude: f32,
@@ -55,6 +56,7 @@ impl Station {
                         let bid = Bid {
                             bidder: bid.bidder.clone(),
                             amount: bid.amount,
+                            price_per_amount: bid.price_per_amount,
                         };
                         accepted_bids.push(bid.clone());
                         energy_needed -= bid.amount;
@@ -64,6 +66,7 @@ impl Station {
                         let partial_bid = Bid {
                             bidder: bid.bidder.clone(),
                             amount: energy_needed,
+                            price_per_amount: bid.price_per_amount,
                         };
                         accepted_bids.push(partial_bid);
                         energy_needed = 0.0;
@@ -74,6 +77,7 @@ impl Station {
                     let accepted_bid = Bid {
                         bidder: accepted_bid.bidder.clone(),
                         amount: accepted_bid.amount,
+                        price_per_amount: accepted_bid.price_per_amount,
                     };
 
                     msg!("Accepted bid: Bidder: {}, Amount: {}", accepted_bid.bidder.clone(), accepted_bid.amount.clone());
@@ -105,7 +109,7 @@ impl Station {
 }
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
-pub struct BatteryReport {
+pub struct BatteryReportParams {
     pub id: String,
     pub latitude: f32,
     pub longitude: f32,
@@ -113,11 +117,16 @@ pub struct BatteryReport {
     pub battery_level: f32,
 }
 
+#[derive(BorshSerialize, BorshDeserialize, Debug)]
+pub struct PlaceBidParams {
+    pub id: String,
+    pub bidder: String,
+    pub amount: f32,
+    pub price_per_amount: f32,
+}
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub enum Action {
-    BatteryReport(BatteryReport),
-    PlaceBid(u64),
-    StartAuction,
-    FinalizeAuction,
+    BatteryReport(BatteryReportParams),
+    PlaceBid(PlaceBidParams),
 }
