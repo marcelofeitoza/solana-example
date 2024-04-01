@@ -2,7 +2,7 @@ mod program_state;
 mod models;
 
 use solana_program::{
-    account_info::AccountInfo,
+    account_info::{AccountInfo, next_account_info},
     entrypoint,
     pubkey::Pubkey,
     entrypoint::ProgramResult,
@@ -10,9 +10,8 @@ use solana_program::{
     msg
 };
 use borsh::BorshDeserialize;
-use solana_program::account_info::next_account_info;
-use program_state::ProgramState;
 
+use program_state::ProgramState;
 use models::Action;
 
 entrypoint!(process_instruction);

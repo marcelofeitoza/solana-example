@@ -8,7 +8,7 @@ pub struct Bid {
     pub price_per_amount: f32,
 }
 
-#[derive(BorshSerialize, BorshDeserialize, Debug, Clone )]
+#[derive(BorshSerialize, BorshDeserialize, Debug, Clone)]
 pub struct Auction {
     pub req_charge: f32,
     pub timestamp: u64,
