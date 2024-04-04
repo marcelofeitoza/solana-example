@@ -1,0 +1,16 @@
+[features]
+seeds = false
+skip-lint = false
+
+[programs.devnet]
+devolt = "7iu9UbDr4B9XSeXP8juRPoD48mKktqWEuk3TmgyVkDHd"
+
+[registry]
+url = "https://api.devnet.solana.com"
+
+[provider]
+cluster = "devnet"
+wallet = "/Users/marcelofeitoza/.config/solana/id.json"
+
+[scripts]
+test = "yarn anchor-tests"

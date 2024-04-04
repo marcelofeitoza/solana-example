@@ -1,28 +1,23 @@
 {
-    "name": "hello-solana",
-    "version": "1.0.0",
-    "description": "",
-    "scripts": {
-        "start": "ts-node ./src/client/main.ts",
-        "clean": "npm run clean:program",
-        "build:program": "cargo build-bpf --manifest-path=./src/program/Cargo.toml --bpf-out-dir=./dist/program",
-        "clean:program": "cargo clean --manifest-path=./src/program/Cargo.toml && rm -rf ./dist",
-        "test:program": "cargo test-bpf --manifest-path=./src/program/Cargo.toml",
-        "clen:build:deploy": "npm run clean:program && npm run build:program && solana program deploy ./dist/program/program.so"
-    },
-    "dependencies": {
-        "@solana/web3.js": "^1.37.1",
-        "mz": "^2.7.0",
-        "borsh": "^2.0.0"
-    },
-    "devDependencies": {
-        "@tsconfig/recommended": "^1.0.1",
-        "@types/mz": "^2.7.2",
-        "ts-node": "^10.0.0",
-        "typescript": "^4.0.5"
-    },
-    "engines": {
-        "node": ">=14.0.0"
-    },
-    "packageManager": "pnpm@8.15.5+sha1.a58c038faac410c947dbdb93eb30994037d0fce2"
+  "scripts": {
+    "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
+    "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
+    "update-types": "cp target/types/devolt.ts sdk/src/types/devolt.ts",
+    "update-idl": "cp target/idl/devolt.json sdk/src/constants/idl.json",
+    "build": "anchor build && yarn update-types",
+    "anchor-tests": "yarn update-types && yarn update-idl && yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bn.js": "^5.1.0",
+    "@types/chai": "^4.3.0",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^20.8.2",
+    "chai": "^4.3.4",
+    "mocha": "^9.0.3",
+    "prettier": "3.2.4",
+    "ts-mocha": "^10.0.0",
+    "typescript": "^4.3.5"
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
