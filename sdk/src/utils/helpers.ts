@@ -6,7 +6,7 @@ export function getStationAddressSync(
   id: string
 ): PublicKey {
   return PublicKey.findProgramAddressSync(
-[Buffer.from(anchor.utils.bytes.utf8.encode('station')), Buffer.from(id)],
+    [Buffer.from(anchor.utils.bytes.utf8.encode('station')), Buffer.from(id)],
     programId
   )[0]
 }

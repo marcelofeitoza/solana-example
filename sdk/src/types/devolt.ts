@@ -3,6 +3,32 @@ export type Devolt = {
   "name": "devolt",
   "instructions": [
     {
+      "name": "retrieveStation",
+      "accounts": [
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "station",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "id",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "batteryReport",
       "accounts": [
         {
@@ -23,9 +49,37 @@ export type Devolt = {
       ],
       "args": [
         {
-          "name": "report",
+          "name": "args",
           "type": {
             "defined": "CreateBateryReportArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "placeBid",
+      "accounts": [
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "station",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "PlaceBidArgs"
           }
         }
       ]
@@ -60,12 +114,76 @@ export type Devolt = {
           {
             "name": "batteryLevel",
             "type": "f64"
+          },
+          {
+            "name": "auction",
+            "type": {
+              "option": {
+                "defined": "Auction"
+              }
+            }
           }
         ]
       }
     }
   ],
   "types": [
+    {
+      "name": "Bid",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bidder",
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "type": "f64"
+          },
+          {
+            "name": "pricePerAmount",
+            "type": "f64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Auction",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "reqCharge",
+            "type": "f64"
+          },
+          {
+            "name": "timestamp",
+            "type": "u64"
+          },
+          {
+            "name": "bids",
+            "type": {
+              "vec": {
+                "defined": "Bid"
+              }
+            }
+          },
+          {
+            "name": "ongoing",
+            "type": "bool"
+          },
+          {
+            "name": "winningBids",
+            "type": {
+              "vec": {
+                "defined": "Bid"
+              }
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "CreateBateryReportArgs",
       "type": {
@@ -90,6 +208,18 @@ export type Devolt = {
           {
             "name": "batteryLevel",
             "type": "f64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PlaceBidArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "string"
           }
         ]
       }
@@ -124,6 +254,32 @@ export const IDL: Devolt = {
   "name": "devolt",
   "instructions": [
     {
+      "name": "retrieveStation",
+      "accounts": [
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "station",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "id",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "batteryReport",
       "accounts": [
         {
@@ -144,9 +300,37 @@ export const IDL: Devolt = {
       ],
       "args": [
         {
-          "name": "report",
+          "name": "args",
           "type": {
             "defined": "CreateBateryReportArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "placeBid",
+      "accounts": [
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "station",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "PlaceBidArgs"
           }
         }
       ]
@@ -181,12 +365,76 @@ export const IDL: Devolt = {
           {
             "name": "batteryLevel",
             "type": "f64"
+          },
+          {
+            "name": "auction",
+            "type": {
+              "option": {
+                "defined": "Auction"
+              }
+            }
           }
         ]
       }
     }
   ],
   "types": [
+    {
+      "name": "Bid",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bidder",
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "type": "f64"
+          },
+          {
+            "name": "pricePerAmount",
+            "type": "f64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Auction",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "reqCharge",
+            "type": "f64"
+          },
+          {
+            "name": "timestamp",
+            "type": "u64"
+          },
+          {
+            "name": "bids",
+            "type": {
+              "vec": {
+                "defined": "Bid"
+              }
+            }
+          },
+          {
+            "name": "ongoing",
+            "type": "bool"
+          },
+          {
+            "name": "winningBids",
+            "type": {
+              "vec": {
+                "defined": "Bid"
+              }
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "CreateBateryReportArgs",
       "type": {
@@ -211,6 +459,18 @@ export const IDL: Devolt = {
           {
             "name": "batteryLevel",
             "type": "f64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PlaceBidArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "string"
           }
         ]
       }

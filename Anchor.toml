@@ -3,10 +3,10 @@ seeds = false
 skip-lint = false
 
 [programs.devnet]
-devolt = "7iu9UbDr4B9XSeXP8juRPoD48mKktqWEuk3TmgyVkDHd"
+devolt = "EWQ3cdo7pHZnmuubzDMAdso5U8nAwbhrAeSKuEw9R2mg"
 
 [registry]
-url = "https://api.devnet.solana.com"
+url = "http://api.devnet.solana.com"
 
 [provider]
 cluster = "devnet"

@@ -3,7 +3,33 @@
   "name": "devolt",
   "instructions": [
     {
-      "name": "bateryReport",
+      "name": "retrieveStation",
+      "accounts": [
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "station",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "id",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "batteryReport",
       "accounts": [
         {
           "name": "signer",
@@ -26,6 +52,34 @@
           "name": "args",
           "type": {
             "defined": "CreateBateryReportArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "placeBid",
+      "accounts": [
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "station",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "PlaceBidArgs"
           }
         }
       ]
@@ -60,12 +114,76 @@
           {
             "name": "batteryLevel",
             "type": "f64"
+          },
+          {
+            "name": "auction",
+            "type": {
+              "option": {
+                "defined": "Auction"
+              }
+            }
           }
         ]
       }
     }
   ],
   "types": [
+    {
+      "name": "Bid",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bidder",
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "type": "f64"
+          },
+          {
+            "name": "pricePerAmount",
+            "type": "f64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Auction",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "reqCharge",
+            "type": "f64"
+          },
+          {
+            "name": "timestamp",
+            "type": "u64"
+          },
+          {
+            "name": "bids",
+            "type": {
+              "vec": {
+                "defined": "Bid"
+              }
+            }
+          },
+          {
+            "name": "ongoing",
+            "type": "bool"
+          },
+          {
+            "name": "winningBids",
+            "type": {
+              "vec": {
+                "defined": "Bid"
+              }
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "CreateBateryReportArgs",
       "type": {
@@ -93,6 +211,18 @@
           }
         ]
       }
+    },
+    {
+      "name": "PlaceBidArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "string"
+          }
+        ]
+      }
     }
   ],
   "errors": [
@@ -116,5 +246,8 @@
       "name": "Unauthorized",
       "msg": "Unauthorized access"
     }
-  ]
+  ],
+  "metadata": {
+    "address": "CctgHjPFcBs3sttdTe2xsmYZt3E3UysEiqt5KgvxVJcs"
+  }
 }
