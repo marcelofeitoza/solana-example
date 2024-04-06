@@ -14,8 +14,8 @@ pub mod devolt {
 
     use super::*;
 
-    pub fn retrieve_station(ctx: Context<RetrieveStation>, id: String) -> Result<()> {
-        instructions::retrieve_station(ctx, id)
+    pub fn retrieve_station(ctx: Context<RetrieveStation>) -> Result<()> {
+        instructions::retrieve_station(ctx)
     }
 
     pub fn battery_report(ctx: Context<CreateBateryReport>, args: CreateBateryReportArgs) -> Result<()> {

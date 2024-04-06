@@ -1,8 +1,7 @@
 use anchor_lang::prelude::*;
 
 use crate::{
-    state::Station,
-    PlaceBidArgs,
+    state::Station, Bid, PlaceBidArgs
 };
 
 #[derive(Debug, Accounts)]
@@ -72,6 +71,9 @@ pub fn place_bid(ctx: Context<PlaceBid>, args: PlaceBidArgs) -> Result<()> {
     msg!("\nINFO: Instruction: Place Bid");
 
     let station_id = args.id.clone();
+    let bidder = args.bidder.clone();
+    let amount = args.amount.clone();
+    let price_per_amount = args.price_per_amount.clone();
 
     if let Some(auction) = &mut station.auction {
         if auction.ongoing {
@@ -82,12 +84,14 @@ pub fn place_bid(ctx: Context<PlaceBid>, args: PlaceBidArgs) -> Result<()> {
                     "\nINFO: Placing bid for auction in station with ID: {}",
                     station_id
                 );
-                // let bid = Bid {
-                //     bidder,
-                //     amount,
-                //     price_per_amount,
-                // };
+                let bid = Bid {
+                    bidder,
+                    amount,
+                    price_per_amount,
+                };
+                msg!("Bid: {:?}", bid);
                 // auction.bids.push(bid);
+                // station.auction.as_mut().unwrap().bids.push(bid);
             } else {
                 msg!(
                     "\nERROR: Auction for station with ID: {} has already ended.",

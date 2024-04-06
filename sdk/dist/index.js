@@ -31,6 +31,7 @@ class DevoltClient {
         return __awaiter(this, void 0, void 0, function* () {
             const encodedId = '3';
             const StationPDA = (0, helpers_1.getStationAddressSync)(this.program.programId, encodedId);
+            console.log("Station PDA: ", StationPDA);
             const tx = yield this.program.methods
                 .batteryReport({
                 id,
@@ -41,8 +42,7 @@ class DevoltClient {
             })
                 .accounts({ signer: this.wallet.publicKey, station: StationPDA })
                 .transaction();
-            console.log(tx);
-            yield this.provider.sendAndConfirm(tx);
+            console.log("Transaction data: ", tx);
         });
     }
     getStation() {

@@ -24,12 +24,7 @@ exports.IDL = {
                     "isSigner": false
                 }
             ],
-            "args": [
-                {
-                    "name": "id",
-                    "type": "string"
-                }
-            ]
+            "args": []
         },
         {
             "name": "batteryReport",
@@ -223,6 +218,18 @@ exports.IDL = {
                     {
                         "name": "id",
                         "type": "string"
+                    },
+                    {
+                        "name": "bidder",
+                        "type": "string"
+                    },
+                    {
+                        "name": "amount",
+                        "type": "f64"
+                    },
+                    {
+                        "name": "pricePerAmount",
+                        "type": "f64"
                     }
                 ]
             }

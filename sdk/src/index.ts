@@ -36,11 +36,12 @@ export default class DevoltClient {
         longitude: number
         maxCapacity: number
         batteryLevel: number
-    
+
     }) {
         const encodedId = '3'
         const StationPDA = getStationAddressSync(this.program.programId, encodedId)
-    
+        console.log("Station PDA: ", StationPDA)
+
         const tx = await this.program.methods
             .batteryReport({
                 id,
@@ -51,12 +52,10 @@ export default class DevoltClient {
             })
             .accounts({ signer: this.wallet.publicKey, station: StationPDA })
             .transaction()
-        
-        console.log(tx)
-    
-        await this.provider.sendAndConfirm(tx)
+
+        console.log("Transaction data: ", tx)
     }
-    
+
 
     async getStation() {
         const encodedId = '3'
@@ -102,7 +101,7 @@ a.batteryReport({
     maxCapacity: 100,
     batteryLevel: 50
 })
-a.getStation() 
+a.getStation()
 a.batteryReport({
     id: '3',
     latitude: 10,

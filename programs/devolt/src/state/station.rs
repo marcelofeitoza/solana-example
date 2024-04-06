@@ -12,6 +12,16 @@ pub struct Station {
     pub auction: Option<Auction>,
 }
 
+impl Station {
+    /// static prefix seed string used to derive the PDAs
+    pub const PREFIX_SEED: &[u8] = b"station";
+
+    /// total on-chain space needed to allocate the account
+    pub const SPACE: usize =
+        // anchor descriminator + all static variables
+        8 + std::mem::size_of::<Self>();
+}
+
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Clone)]
 pub struct Bid {
     pub bidder: String,
@@ -39,15 +49,9 @@ pub struct CreateBateryReportArgs {
 
 #[derive(AnchorSerialize, AnchorDeserialize, Debug)]
 pub struct PlaceBidArgs {
-    pub id: String
+    pub id: String,
+    pub bidder: String,
+    pub amount: f64,
+    pub price_per_amount: f64,
 }
 
-impl Station {
-    /// static prefix seed string used to derive the PDAs
-    pub const PREFIX_SEED: &[u8] = b"station";
-
-    /// total on-chain space needed to allocate the account
-    pub const SPACE: usize =
-        // anchor descriminator + all static variables
-        8 + std::mem::size_of::<Self>();
-}

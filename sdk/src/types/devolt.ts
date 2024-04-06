@@ -21,12 +21,7 @@ export type Devolt = {
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "id",
-          "type": "string"
-        }
-      ]
+      "args": []
     },
     {
       "name": "batteryReport",
@@ -220,6 +215,18 @@ export type Devolt = {
           {
             "name": "id",
             "type": "string"
+          },
+          {
+            "name": "bidder",
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "type": "f64"
+          },
+          {
+            "name": "pricePerAmount",
+            "type": "f64"
           }
         ]
       }
@@ -272,12 +279,7 @@ export const IDL: Devolt = {
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "id",
-          "type": "string"
-        }
-      ]
+      "args": []
     },
     {
       "name": "batteryReport",
@@ -471,6 +473,18 @@ export const IDL: Devolt = {
           {
             "name": "id",
             "type": "string"
+          },
+          {
+            "name": "bidder",
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "type": "f64"
+          },
+          {
+            "name": "pricePerAmount",
+            "type": "f64"
           }
         ]
       }

@@ -21,12 +21,7 @@
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "id",
-          "type": "string"
-        }
-      ]
+      "args": []
     },
     {
       "name": "batteryReport",
@@ -220,6 +215,18 @@
           {
             "name": "id",
             "type": "string"
+          },
+          {
+            "name": "bidder",
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "type": "f64"
+          },
+          {
+            "name": "pricePerAmount",
+            "type": "f64"
           }
         ]
       }
@@ -248,6 +255,6 @@
     }
   ],
   "metadata": {
-    "address": "CctgHjPFcBs3sttdTe2xsmYZt3E3UysEiqt5KgvxVJcs"
+    "address": "5cRTLVha74BQ2JFvgWUEgKFb7FmDGF58Uh3AMKernaBy"
   }
 }
