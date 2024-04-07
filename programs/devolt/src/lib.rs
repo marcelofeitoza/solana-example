@@ -7,7 +7,7 @@ mod errors;
 mod instructions;
 mod state;
 
-declare_id!("EWQ3cdo7pHZnmuubzDMAdso5U8nAwbhrAeSKuEw9R2mg");
+declare_id!("3UMz3ZmnruockoaMSqAYw22VkUgxDq4qdMa3A5WzQ3P1");
 
 #[program]
 pub mod devolt {

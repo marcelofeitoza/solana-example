@@ -1,1 +1,1 @@
-export const DEVOLT_PROGRAM_ID = '7iu9UbDr4B9XSeXP8juRPoD48mKktqWEuk3TmgyVkDHd'
+export const DEVOLT_PROGRAM_ID = '3UMz3ZmnruockoaMSqAYw22VkUgxDq4qdMa3A5WzQ3P1'

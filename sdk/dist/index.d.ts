@@ -14,6 +14,6 @@ export default class DevoltClient {
         maxCapacity: number;
         batteryLevel: number;
     }): Promise<void>;
-    getStation(): Promise<void>;
+    getStation(id: string): Promise<void>;
 }
 export declare const convertSecretKeyToKeypair: (key: string) => web3.Keypair;

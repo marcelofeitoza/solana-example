@@ -3,7 +3,7 @@ seeds = false
 skip-lint = false
 
 [programs.devnet]
-devolt = "EWQ3cdo7pHZnmuubzDMAdso5U8nAwbhrAeSKuEw9R2mg"
+devolt = "3UMz3ZmnruockoaMSqAYw22VkUgxDq4qdMa3A5WzQ3P1"
 
 [registry]
 url = "http://api.devnet.solana.com"

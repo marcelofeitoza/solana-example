@@ -1,28 +1,29 @@
-<div align="center">
-  <h1>Devolt Protocol</h1>
-</div>
+# Running
 
-The official Devolt. Create your own solana dApp and build the best products!! Powered By @GenesysGO.
+## Using already deployed contract
 
-**collection, documents, storage, analytics**
+If already with the target folder, try running:
 
-### Docs
-[https://devoltxyz.github.io/devolt-protocol/](https://docs.devolt.xyz/)
-
-## Quick Setup
-
-### Install
-
-Install these dependencies over:
-
-npm:
-
-```shell
-npm install @devoltxyz/devolt-protocol
+```bash
+yarn update-idl && yarn update-types
 ```
 
-yarn:
+Then, you can run the project with:
 
-```shell
-yarn add @devoltxyz/devolt-protocol
+```bash
+cd sdk/ && yarn start
 ```
+
+## Deploying the contract
+
+If you want to deploy the contract, you can run:
+
+```bash
+cargo clean # Clean the target folder
+anchor build 
+anchor deploy
+```
+
+The last command `anchor deploy` will output the Program ID, which MUST be updated in the `programs/devolt/src/lib.rs` file, `Anchor.toml` file and in the `sdk/src/constants/program.ts` files.
+
+After that, you can run the commands above to run the project (updating the IDL and types then running the project).

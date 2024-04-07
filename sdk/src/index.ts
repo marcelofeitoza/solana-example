@@ -22,6 +22,8 @@ export default class DevoltClient {
             AnchorProvider.defaultOptions()
         )
         this.program = new Program<Devolt>(IDL, DEVOLT_PROGRAM_ID, this.provider)
+        
+        console.log("Program ID: ", this.program.programId)
     }
 
     async batteryReport({
@@ -38,9 +40,9 @@ export default class DevoltClient {
         batteryLevel: number
 
     }) {
-        const encodedId = '3'
+        const encodedId = id // '3'
         const StationPDA = getStationAddressSync(this.program.programId, encodedId)
-        console.log("Station PDA: ", StationPDA)
+        // console.log("Station PDA: ", StationPDA)
 
         const tx = await this.program.methods
             .batteryReport({
@@ -51,19 +53,22 @@ export default class DevoltClient {
                 batteryLevel
             })
             .accounts({ signer: this.wallet.publicKey, station: StationPDA })
-            .transaction()
+            .rpc()
 
-        console.log("Transaction data: ", tx)
+        console.log("\nTransaction data: ", tx)
+
+        // const d = await this.program.account.station.fetch(StationPDA)
     }
 
+    
 
-    async getStation() {
-        const encodedId = '3'
+    async getStation(id: string) {
+        const encodedId = id // '3'
         const StationPDA = getStationAddressSync(this.program.programId, encodedId)
 
-        const d = await this.program.account.station.fetch(StationPDA)
+        const station = await this.program.account.station.fetch(StationPDA)
 
-        console.log(d)
+        console.log("\nStation: ", station)
     }
 }
 
@@ -94,21 +99,55 @@ const a = new DevoltClient(
 
 console.log("Caller: ", a.wallet.publicKey.toBase58())
 
-a.batteryReport({
-    id: '3',
-    latitude: 0,
-    longitude: 0,
-    maxCapacity: 100,
-    batteryLevel: 50
-})
-a.getStation()
-a.batteryReport({
-    id: '3',
-    latitude: 10,
-    longitude: 90,
-    maxCapacity: 144363,
-    batteryLevel: 99
-})
-a.getStation()
+async function runInSequence() {
+    const id1 = '1';
+    const latitude1 = Math.floor(Math.random() * 1000);
+    const longitude1 = Math.floor(Math.random() * 1000);
+    const maxCapacity1 = Math.floor(Math.random() * 1000);
+    const batteryLevel1 = Math.floor(Math.random() * 100);
+
+    console.log("\n\nInserting values for batteryReport 1:");
+    console.log("id:", id1);
+    console.log("latitude:", latitude1);
+    console.log("longitude:", longitude1);
+    console.log("maxCapacity:", maxCapacity1);
+    console.log("batteryLevel:", batteryLevel1);
+
+    await a.batteryReport({
+        id: id1,
+        latitude: latitude1,
+        longitude: longitude1,
+        maxCapacity: maxCapacity1,
+        batteryLevel: batteryLevel1
+    });
+
+    await a.getStation('1');
+
+    const id2 = '2';
+    const latitude2 = Math.floor(Math.random() * 1000);
+    const longitude2 = Math.floor(Math.random() * 1000);
+    const maxCapacity2 = Math.floor(Math.random() * 1000);
+    const batteryLevel2 = Math.floor(Math.random() * 100);
+
+    console.log("\n\nInserting values for batteryReport 2:");
+    console.log("id:", id2);
+    console.log("latitude:", latitude2);
+    console.log("longitude:", longitude2);
+    console.log("maxCapacity:", maxCapacity2);
+    console.log("batteryLevel:", batteryLevel2);
+
+    await a.batteryReport({
+        id: id2,
+        latitude: latitude2,
+        longitude: longitude2,
+        maxCapacity: maxCapacity2,
+        batteryLevel: batteryLevel2
+    });
+
+    await a.getStation('2');
+}
+
+runInSequence();
+
 // import * as anchor from '@coral-xyz/anchor'
 // console.log(Buffer.from(anchor.utils.bytes.utf8.encode('station')).toString('hex'))

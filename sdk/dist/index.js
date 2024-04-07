@@ -26,12 +26,13 @@ class DevoltClient {
         this.wallet = wallet;
         this.provider = new anchor_1.AnchorProvider(this.connection, this.wallet, anchor_1.AnchorProvider.defaultOptions());
         this.program = new anchor_1.Program(devolt_1.IDL, program_1.DEVOLT_PROGRAM_ID, this.provider);
+        console.log("Program ID: ", this.program.programId);
     }
     batteryReport({ id, latitude, longitude, maxCapacity, batteryLevel }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const encodedId = '3';
+            const encodedId = id; // '3'
             const StationPDA = (0, helpers_1.getStationAddressSync)(this.program.programId, encodedId);
-            console.log("Station PDA: ", StationPDA);
+            // console.log("Station PDA: ", StationPDA)
             const tx = yield this.program.methods
                 .batteryReport({
                 id,
@@ -41,16 +42,17 @@ class DevoltClient {
                 batteryLevel
             })
                 .accounts({ signer: this.wallet.publicKey, station: StationPDA })
-                .transaction();
-            console.log("Transaction data: ", tx);
+                .rpc();
+            console.log("\nTransaction data: ", tx);
+            // const d = await this.program.account.station.fetch(StationPDA)
         });
     }
-    getStation() {
+    getStation(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const encodedId = '3';
+            const encodedId = id; // '3'
             const StationPDA = (0, helpers_1.getStationAddressSync)(this.program.programId, encodedId);
-            const d = yield this.program.account.station.fetch(StationPDA);
-            console.log(d);
+            const station = yield this.program.account.station.fetch(StationPDA);
+            console.log("\nStation: ", station);
         });
     }
 }
@@ -75,21 +77,48 @@ const wallet = new anchor_1.Wallet((0, exports.convertSecretKeyToKeypair)(secret
 console.log(wallet.publicKey.toBase58());
 const a = new DevoltClient(new web3_js_1.Connection('https://api.devnet.solana.com'), wallet);
 console.log("Caller: ", a.wallet.publicKey.toBase58());
-a.batteryReport({
-    id: '3',
-    latitude: 0,
-    longitude: 0,
-    maxCapacity: 100,
-    batteryLevel: 50
-});
-a.getStation();
-a.batteryReport({
-    id: '3',
-    latitude: 10,
-    longitude: 90,
-    maxCapacity: 144363,
-    batteryLevel: 99
-});
-a.getStation();
+function runInSequence() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const id1 = '1';
+        const latitude1 = Math.floor(Math.random() * 1000);
+        const longitude1 = Math.floor(Math.random() * 1000);
+        const maxCapacity1 = Math.floor(Math.random() * 1000);
+        const batteryLevel1 = Math.floor(Math.random() * 100);
+        console.log("\n\nInserting values for batteryReport 1:");
+        console.log("id:", id1);
+        console.log("latitude:", latitude1);
+        console.log("longitude:", longitude1);
+        console.log("maxCapacity:", maxCapacity1);
+        console.log("batteryLevel:", batteryLevel1);
+        yield a.batteryReport({
+            id: id1,
+            latitude: latitude1,
+            longitude: longitude1,
+            maxCapacity: maxCapacity1,
+            batteryLevel: batteryLevel1
+        });
+        yield a.getStation('1');
+        const id2 = '2';
+        const latitude2 = Math.floor(Math.random() * 1000);
+        const longitude2 = Math.floor(Math.random() * 1000);
+        const maxCapacity2 = Math.floor(Math.random() * 1000);
+        const batteryLevel2 = Math.floor(Math.random() * 100);
+        console.log("\n\nInserting values for batteryReport 2:");
+        console.log("id:", id2);
+        console.log("latitude:", latitude2);
+        console.log("longitude:", longitude2);
+        console.log("maxCapacity:", maxCapacity2);
+        console.log("batteryLevel:", batteryLevel2);
+        yield a.batteryReport({
+            id: id2,
+            latitude: latitude2,
+            longitude: longitude2,
+            maxCapacity: maxCapacity2,
+            batteryLevel: batteryLevel2
+        });
+        yield a.getStation('2');
+    });
+}
+runInSequence();
 // import * as anchor from '@coral-xyz/anchor'
 // console.log(Buffer.from(anchor.utils.bytes.utf8.encode('station')).toString('hex'))
